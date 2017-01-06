@@ -1,0 +1,27 @@
+---
+- name: add git user
+  user: name={{ gitolite.user }} home={{ gitolite.homedir }} generate_ssh_key=yes state=present
+
+- name: install git
+  apt: pkg=git-core state=latest
+
+- name: install gitolite
+  apt: pkg=gitolite3 state=latest
+
+- name: create git admin directory
+  file: path={{ gitolite.admindir }} owner={{ gitolite.user }} group={{ gitolite.group }} state=directory
+
+- name: copy admin keys
+  copy: src={{ item }}.pub dest={{ gitolite.admindir }}/{{ item }}.pub
+  with_items: "{{ gitolite.admins }}"
+
+# - name: copy gitolite.rc
+#   template: src=gitolite.rc.j2 dest={{ gitolite.homedir }}/.gitolite.rc
+
+- name: set permissions on {{ gitolite.homedir }}
+  file: path={{ gitolite.homedir }} recurse=yes owner={{ gitolite.user }} group={{ gitolite.group }}
+
+- name: configure gitolite
+  command:  gitolite setup -pk {{ gitolite.admindir }}/{{ item }}.pub chdir={{ gitolite.homedir }}
+  become_user: git
+  with_items: "{{ gitolite.admins }}"

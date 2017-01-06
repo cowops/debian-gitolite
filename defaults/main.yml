@@ -1,0 +1,8 @@
+gitolite:
+    user: git
+    group: git
+    homedir: /home/git
+    admindir: /home/git/admin
+    admins:
+      - user1
+      - user2
