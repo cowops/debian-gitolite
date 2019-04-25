@@ -3,10 +3,14 @@
   user: name={{ gitolite.user }} home={{ gitolite.homedir }} generate_ssh_key=yes state=present
 
 - name: install git
-  apt: pkg=git-core state=latest
+  apt:
+    name: git-core
+    state: latest
 
 - name: install gitolite
-  apt: pkg=gitolite3 state=latest
+  apt:
+    name: gitolite3
+    state: latest
 
 - name: create git admin directory
   file: path={{ gitolite.admindir }} owner={{ gitolite.user }} group={{ gitolite.group }} state=directory
